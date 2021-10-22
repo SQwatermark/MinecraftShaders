@@ -1,0 +1,42 @@
+{
+    "targets": [
+        "swap",
+        { "name":"time", "width": 1, "height": 1 },
+        { "name":"tmptime", "width": 1, "height": 1 }
+    ],
+    "passes": [
+        {
+            "name": "copy",
+            "intarget": "time",
+            "outtarget": "tmptime"
+        },
+        {
+            "name": "update_time",
+            "intarget": "tmptime",
+            "outtarget": "time"
+        },
+        {
+            "name": "draw_text",
+            "intarget": "minecraft:main",
+            "auxtargets": [
+                {
+                    "name": "FontSampler",
+                    "id": "shader_font",
+                    "width":128,
+                    "height":128,
+                    "bilinear":false
+                },
+                {
+                    "name": "TimeSampler",
+                    "id": "time"
+                }
+            ],
+            "outtarget": "swap"
+        },
+        {
+            "name": "blit",
+            "intarget": "swap",
+            "outtarget": "minecraft:main"
+        }
+    ]
+}
