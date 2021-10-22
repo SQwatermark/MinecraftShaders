@@ -1,0 +1,61 @@
+{
+    "targets": [
+        "swap",
+        "final",
+        { "name":"time", "width": 1, "height": 1 },
+        { "name":"tmptime", "width": 1, "height": 1 }
+    ],
+    "passes": [
+        {
+            "name": "copy",
+            "intarget": "time",
+            "outtarget": "tmptime"
+        },
+        {
+            "name": "update_time",
+            "intarget": "tmptime",
+            "outtarget": "time"
+        },
+        {
+            "name": "journey",
+            "intarget": "minecraft:main",
+            "outtarget": "swap",
+            "auxtargets": [
+                {
+                    "name": "iChannel0",
+                    "id": "ichannel0",
+                    "width": 1024,
+                    "height": 1024,
+                    "bilinear": false
+                },
+                {
+                    "name": "iChannel1",
+                    "id": "ichannel2",
+                    "width": 128,
+                    "height": 128,
+                    "bilinear": false
+                },
+                {
+                    "name": "FontSampler",
+                    "id": "shader_font",
+                    "width":128,
+                    "height":128,
+                    "bilinear":false
+                },
+                {
+                    "name": "TimeSampler",
+                    "id": "time"
+                },
+                {
+                    "name": "GlowingSampler",
+                    "id": "final"
+                }
+            ]
+        },
+        {
+            "name": "blit",
+            "intarget": "swap",
+            "outtarget": "final"
+        }
+    ]
+}
