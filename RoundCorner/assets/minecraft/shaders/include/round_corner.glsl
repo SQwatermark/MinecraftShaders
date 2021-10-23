@@ -4,13 +4,18 @@ bool allowAlpha;
 bool hardEdge;
 bool isAltas;
 
+vec2 samplerSize;
+
+const int tileSize = 16;
+
 // 进行UV偏移计算
 vec2 offsetUV(vec2 original, vec2 offset)
 {
     vec2 uv = original + offset;
     if (isAltas) {
-        // 这个式子会把纹理集中跑出原先纹理的uv值拽回去，并进行密铺
-        vec2 fixedUV = (floor(original * 64) + fract(uv * 64)) / 64;
+        vec2 tileCount = samplerSize / vec2(tileSize);
+        // 这个式子会把纹理集中跑出原先纹理的uv值拽回去
+        vec2 fixedUV = (floor(original * tileCount) + fract(uv * tileCount)) / tileCount;
         if (hardEdge) {
             // 如果使用硬边缘，则在边缘处直接返回原uv值，这样边缘不会出现圆角
             return (fixedUV == uv) ? uv : original;
@@ -47,42 +52,37 @@ bool isHueClose(vec4 color1, vec4 color2) {
 
 vec4 getRoundCorner(sampler2D SamplerIn, vec2 texCoord, float vertexDistance, int type) {
 
-    if (type == 1) {
-        // 用于solid的设置
-        allowAlpha = false;
-        hardEdge = false;
-        isAltas = true;
-    } else if (type == 2) {
-        // 用于cutout的设置
-        allowAlpha = true;
-        hardEdge = true;
-        isAltas = true;
-    } else if (type == 3) {
-        // 用于cutout mipped的设置
-        allowAlpha = true;
-        hardEdge = true;
-        isAltas = true;
-    } else {
-        allowAlpha = true;
-        hardEdge = false;
-        isAltas = false;
-    }
-
     if (vertexDistance > 8 && vertexDistance < 1400) {
         // 大于1400的是GUI等乱七八糟的东西
         // 见 https://github.com/ShockMicro/Minecraft-Shaders/wiki/Isolating-certain-elements
         return texture(SamplerIn, texCoord);
     } else {
-        vec2 size = textureSize(SamplerIn, 0); // 纹理尺寸
-        vec2 texelCoord = texCoord * size;  // 去归一化的纹理坐标
+        if (type == 1) {
+            // 用于solid的设置
+            allowAlpha = false;
+            hardEdge = true;
+            isAltas = true;
+        } else if (type == 2) {
+            // 用于cutout的设置
+            allowAlpha = true;
+            hardEdge = true;
+            isAltas = true;
+        } else {
+            allowAlpha = true;
+            hardEdge = false;
+            isAltas = false;
+        }
+
+        samplerSize = textureSize(SamplerIn, 0); // 纹理尺寸
+        vec2 texelCoord = texCoord * samplerSize;  // 去归一化的纹理坐标
         vec2 texelMiddle = floor(texelCoord) + vec2(0.5, 0.5); // 去归一化的像素中心点坐标
         if (distance(texelCoord, texelMiddle) < 0.5) {
             // 在像素内切圆里面就直接返回原本颜色
             return texture(SamplerIn, texCoord);
         } else {
-            vec2 texMiddle = texelMiddle / size; // 归一化的像素中心点坐标
+            vec2 texMiddle = texelMiddle / samplerSize; // 归一化的像素中心点坐标
             vec2 directionMultiplier = 2 * floor(texelCoord - texelMiddle) + vec2(1.0); // 拐角方向，值为(-1,-1)(-1,1)(1,-1)(1,1)
-            vec2 normalizedTexel = 1.0 / size; // 归一化的一像素大小
+            vec2 normalizedTexel = 1.0 / samplerSize; // 归一化的一像素大小
 
             vec2 directionTexel = directionMultiplier * normalizedTexel;
             // 在拐角相邻的三个像素和自身进行采样

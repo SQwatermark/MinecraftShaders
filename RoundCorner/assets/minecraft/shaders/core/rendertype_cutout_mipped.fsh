@@ -18,7 +18,7 @@ in vec4 normal;
 out vec4 fragColor;
 
 void main() {
-    vec4 color = getRoundCorner(Sampler0, texCoord0, vertexDistance, 3) * vertexColor * ColorModulator;
+    vec4 color = getRoundCorner(Sampler0, texCoord0, vertexDistance, 2) * vertexColor * ColorModulator;
     if (color.a < 0.5) {
         discard;
     }

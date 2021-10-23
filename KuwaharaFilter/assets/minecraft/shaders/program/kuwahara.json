@@ -5,7 +5,7 @@
         "dstrgb": "zero"
     },
     "vertex": "blit",
-    "fragment": "sss",
+    "fragment": "kuwahara",
     "attributes": [ "Position" ],
     "samplers": [
         { "name": "DiffuseSampler" }

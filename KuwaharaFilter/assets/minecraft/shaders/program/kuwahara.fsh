@@ -37,7 +37,7 @@ vec4 GetKernelMeanAndVariance(vec2 UV, ivec4 Range) {
 void main() {
 
     TexelSize = 2.0 / OutSize;
-    ivec2 radius = ivec2(5, 5);
+    ivec2 radius = ivec2(2, 2);
 
     Range = ivec4(-radius.x, 0, -radius.y, 0);
     MeanAndVariance[0] = GetKernelMeanAndVariance(texCoord, Range);

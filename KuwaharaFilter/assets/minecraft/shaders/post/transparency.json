@@ -61,7 +61,7 @@
             ]
         },
         {
-            "name": "sss",
+            "name": "kuwahara",
             "intarget": "final",
             "outtarget": "minecraft:main"
         }
